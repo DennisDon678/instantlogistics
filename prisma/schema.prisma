@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Delivery {
+  id         String         @id @default(uuid())
+  deliveryId String         @unique @map("delivery_id")
+  status     DeliveryStatus @default(PENDING)
+
+  // Sender Information
+  senderName    String @map("sender_name")
+  senderAddress String @map("sender_address")
+  senderEmail   String @map("sender_email")
+  senderPhone   String @map("sender_phone")
+
+  // Receiver Information
+  receiverName    String @map("receiver_name")
+  receiverAddress String @map("receiver_address")
+  receiverEmail   String @map("receiver_email")
+  receiverPhone   String @map("receiver_phone")
+
+  scheduledDate DateTime @map("scheduled_date")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  history DeliveryHistory[]
+
+  @@map("deliveries")
+}
+
+model DeliveryHistory {
+  id          String   @id @default(uuid())
+  deliveryId  String   @map("delivery_id")
+  status      String
+  location    String
+  description String?
+  timestamp   DateTime @default(now())
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relations
+  delivery Delivery @relation(fields: [deliveryId], references: [id], onDelete: Cascade)
+
+  @@map("delivery_history")
+}
+
+model SiteSettings {
+  id          String @id @default(uuid())
+  companyName String @map("company_name")
+  tagline     String
+  email       String
+  phone       String
+  address     String
+  country     String
+
+  // Social Media
+  facebook  String?
+  twitter   String?
+  instagram String?
+  linkedin  String?
+
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("site_settings")
+}
+
+enum DeliveryStatus {
+  PENDING
+  IN_TRANSIT
+  DELIVERED
+  DELAYED
+}
