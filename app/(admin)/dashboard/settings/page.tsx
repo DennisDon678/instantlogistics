@@ -1,24 +1,58 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Building2, MapPin, Mail, Phone, Facebook, Twitter, Instagram, Linkedin, Save } from 'lucide-react'
 
 export default function SettingsPage() {
+    const [loading, setLoading] = useState(true)
+    const [saving, setSaving] = useState(false)
+    const [message, setMessage] = useState({ type: '', text: '' })
+
     const [siteDetails, setSiteDetails] = useState({
-        companyName: 'Instant Logistics',
-        tagline: 'Fast. Smart. Futuristic.',
-        email: 'contact@instantlogistics.com',
-        phone: '+1 (555) 123-4567',
-        address: '123 Logistics Ave, Tech City, TC 12345',
-        country: 'United States',
+        companyName: '',
+        tagline: '',
+        email: '',
+        phone: '',
+        address: '',
+        country: '',
     })
 
     const [socialMedia, setSocialMedia] = useState({
-        facebook: 'https://facebook.com/instantlogistics',
-        twitter: 'https://twitter.com/instantlogistics',
-        instagram: 'https://instagram.com/instantlogistics',
-        linkedin: 'https://linkedin.com/company/instantlogistics',
+        facebook: '',
+        twitter: '',
+        instagram: '',
+        linkedin: '',
     })
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            try {
+                const res = await fetch('/api/admin/settings')
+                const data = await res.json()
+                if (data.id) {
+                    setSiteDetails({
+                        companyName: data.companyName || '',
+                        tagline: data.tagline || '',
+                        email: data.email || '',
+                        phone: data.phone || '',
+                        address: data.address || '',
+                        country: data.country || '',
+                    })
+                    setSocialMedia({
+                        facebook: data.facebook || '',
+                        twitter: data.twitter || '',
+                        instagram: data.instagram || '',
+                        linkedin: data.linkedin || '',
+                    })
+                }
+            } catch (error) {
+                console.error('Failed to fetch settings:', error)
+            } finally {
+                setLoading(false)
+            }
+        }
+        fetchSettings()
+    }, [])
 
     const handleSiteDetailsChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setSiteDetails({
@@ -34,11 +68,35 @@ export default function SettingsPage() {
         })
     }
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        console.log('Site Details:', siteDetails)
-        console.log('Social Media:', socialMedia)
-        // Handle form submission
+        setSaving(true)
+        setMessage({ type: '', text: '' })
+
+        try {
+            const res = await fetch('/api/admin/settings', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    ...siteDetails,
+                    ...socialMedia,
+                }),
+            })
+
+            if (!res.ok) throw new Error('Failed to save settings')
+
+            setMessage({ type: 'success', text: 'Settings saved successfully!' })
+        } catch (error) {
+            setMessage({ type: 'error', text: 'Failed to save settings. Please try again.' })
+        } finally {
+            setSaving(false)
+        }
+    }
+
+    if (loading) {
+        return <div className="p-8 text-white">Loading settings...</div>
     }
 
     return (
@@ -55,6 +113,12 @@ export default function SettingsPage() {
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
+                    {message.text && (
+                        <div className={`p-4 rounded-lg ${message.type === 'success' ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}>
+                            {message.text}
+                        </div>
+                    )}
+
                     {/* Site Details Section */}
                     <div className="bg-[#1a2836] p-6 rounded-xl">
                         <div className="flex items-center gap-3 mb-6">
@@ -250,10 +314,11 @@ export default function SettingsPage() {
                     <div className="flex justify-end">
                         <button
                             type="submit"
-                            className="flex items-center gap-2 px-6 py-3 bg-[#258cf4] text-white font-bold rounded-lg hover:bg-[#258cf4]/90 transition-colors"
+                            disabled={saving}
+                            className="flex items-center gap-2 px-6 py-3 bg-[#258cf4] text-white font-bold rounded-lg hover:bg-[#258cf4]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             <Save className="w-5 h-5" />
-                            Save Changes
+                            {saving ? 'Saving...' : 'Save Changes'}
                         </button>
                     </div>
                 </form>

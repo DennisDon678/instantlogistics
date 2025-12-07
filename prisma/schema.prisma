@@ -71,6 +71,18 @@ model SiteSettings {
   @@map("site_settings")
 }
 
+model Admin {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  email     String   @unique
+  password  String // bcrypt hashed
+  name      String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("admins")
+}
+
 enum DeliveryStatus {
   PENDING
   IN_TRANSIT

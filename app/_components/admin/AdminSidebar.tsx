@@ -37,7 +37,7 @@ export default function AdminSidebar({ isOpen = false, onClose }: AdminSidebarPr
 
             {/* Sidebar */}
             <aside className={`
-                fixed lg:static inset-y-0 left-0 z-[60]
+                fixed lg:static inset-y-0 left-0 z-60
                 w-64 flex flex-col justify-between bg-white/5 p-4 border-r border-white/10
                 transform transition-transform duration-300 ease-in-out
                 ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
@@ -94,6 +94,27 @@ export default function AdminSidebar({ isOpen = false, onClose }: AdminSidebarPr
                 <div className="flex flex-col gap-1">
                     {bottomActions.map((item) => {
                         const Icon = item.icon
+
+                        // Special handling for logout
+                        if (item.name === 'Log out') {
+                            return (
+                                <button
+                                    key={item.name}
+                                    onClick={async () => {
+                                        try {
+                                            await fetch('/api/auth/logout', { method: 'POST' })
+                                            window.location.href = '/admin/login'
+                                        } catch (error) {
+                                            console.error('Logout failed:', error)
+                                        }
+                                    }}
+                                    className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/10 transition-colors duration-200 text-left"
+                                >
+                                    <Icon className="w-5 h-5 text-gray-300" />
+                                    <p className="text-gray-300 text-sm font-medium leading-normal">{item.name}</p>
+                                </button>
+                            )
+                        }
 
                         return (
                             <Link
