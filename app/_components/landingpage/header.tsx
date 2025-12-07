@@ -1,6 +1,7 @@
+'use client'
 import { RocketIcon } from 'lucide-react'
 import Link from 'next/link'
-
+import { useRouter } from 'next/navigation'
 function Header() {
   const navigations = [
     {
@@ -19,6 +20,9 @@ function Header() {
       href:"/contact"
     },
   ]
+
+ 
+
   return (
     <div>
       {/* main housing */}
