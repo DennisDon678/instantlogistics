@@ -50,7 +50,7 @@ export default function AdminSidebar({ isOpen = false, onClose, user }: AdminSid
             {/* Sidebar */}
             <aside className={`
                 fixed lg:sticky lg:top-0 lg:h-screen inset-y-0 left-0 z-60
-                w-64 flex flex-col justify-between bg-white/5 p-4 border-r border-white/10
+                w-64 flex flex-col justify-between bg-primary/95 p-4 border-r border-white/10
                 transform transition-transform duration-300 ease-in-out
                 ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
                 overflow-y-auto
