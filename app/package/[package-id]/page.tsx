@@ -71,7 +71,7 @@ function Tracking() {
     }
 
     return (
-        <div className="px-10 py-4">
+        <div className="px-4 md:px-10 py-4">
             <Header />
             <div className="mt-5 flex flex-col gap-2">
                 <h2 className="text-2xl md:text-3xl font-semibold">Track your package</h2>
@@ -116,7 +116,7 @@ function Tracking() {
 
                 {/* Show content only if not loading and no error and delivery exists */}
                 {!loading && !error && delivery && (
-                    <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-4">
+                    <div className="flex flex-col-reverse md:grid md:grid-cols-[2fr_1fr] gap-4">
                         {/* Shipment Details */}
                         <div className='flex flex-col'>
                             <div className="bg-secondary p-6 rounded-md">
