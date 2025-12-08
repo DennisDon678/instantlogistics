@@ -20,7 +20,7 @@ const services = [
 
 function Services() {
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4" id="services">
             {/* title */}
             <h2 className='text-xl font-semibold'>Our Advanced Services</h2>
             {/* service list */}
