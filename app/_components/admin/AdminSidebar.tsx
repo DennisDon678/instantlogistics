@@ -20,10 +20,24 @@ const bottomActions = [
 interface AdminSidebarProps {
     isOpen?: boolean
     onClose?: () => void
+    user?: {
+        name: string
+        email: string
+    } | null
 }
 
-export default function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
+export default function AdminSidebar({ isOpen = false, onClose, user }: AdminSidebarProps) {
     const pathname = usePathname()
+
+    // Get initials from name
+    const getInitials = (name: string) => {
+        return name
+            .split(' ')
+            .map(n => n[0])
+            .join('')
+            .toUpperCase()
+            .slice(0, 2)
+    }
 
     return (
         <>
@@ -37,10 +51,11 @@ export default function AdminSidebar({ isOpen = false, onClose }: AdminSidebarPr
 
             {/* Sidebar */}
             <aside className={`
-                fixed lg:static inset-y-0 left-0 z-60
+                fixed lg:sticky lg:top-0 lg:h-screen inset-y-0 left-0 z-60
                 w-64 flex flex-col justify-between bg-white/5 p-4 border-r border-white/10
                 transform transition-transform duration-300 ease-in-out
                 ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+                overflow-y-auto
             `}>
                 {/* Close button for mobile */}
                 <div className="lg:hidden absolute top-4 right-4">
@@ -56,11 +71,17 @@ export default function AdminSidebar({ isOpen = false, onClose }: AdminSidebarPr
                     {/* User Profile */}
                     <div className="flex items-center gap-3 p-2">
                         <div className="bg-linear-to-br from-blue-500 to-purple-600 rounded-full size-10 flex items-center justify-center">
-                            <span className="text-white font-semibold text-lg">AD</span>
+                            <span className="text-white font-semibold text-lg">
+                                {user?.name ? getInitials(user.name) : 'AD'}
+                            </span>
                         </div>
                         <div className="flex flex-col">
-                            <h1 className="text-white text-base font-medium leading-normal">Alex Drake</h1>
-                            <p className="text-gray-400 text-sm font-normal leading-normal">Logistics Manager</p>
+                            <h1 className="text-white text-base font-medium leading-normal">
+                                {user?.name || 'Admin User'}
+                            </h1>
+                            <p className="text-gray-400 text-sm font-normal leading-normal">
+                                {'Logistics Manager'}
+                            </p>
                         </div>
                     </div>
 

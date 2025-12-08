@@ -16,6 +16,8 @@ export default function AdminLayout({
     const [loading, setLoading] = useState(true)
     const [authenticated, setAuthenticated] = useState(false)
 
+    const [user, setUser] = useState<{ name: string, email: string } | null>(null)
+
     useEffect(() => {
         // Skip auth check for login page
         if (pathname === '/admin/login') {
@@ -32,6 +34,7 @@ export default function AdminLayout({
 
                 if (data.authenticated) {
                     setAuthenticated(true)
+                    setUser(data.admin)
                 } else {
                     router.push('/admin/login')
                 }
@@ -78,7 +81,11 @@ export default function AdminLayout({
                 <Menu className="w-6 h-6 text-white" />
             </button>
 
-            <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+            <AdminSidebar
+                isOpen={sidebarOpen}
+                onClose={() => setSidebarOpen(false)}
+                user={user}
+            />
 
             <main className="flex-1 overflow-y-auto">
                 {children}

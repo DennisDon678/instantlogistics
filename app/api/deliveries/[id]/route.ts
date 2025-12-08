@@ -4,14 +4,18 @@ import { prisma } from '@/lib/prisma'
 // GET /api/deliveries/[id] - Get single delivery
 export async function GET(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    props: { params: Promise<{ id: string }> }
 ) {
     try {
+        const params = await props.params;
+        const decodedId = decodeURIComponent(params.id);
+
         const delivery = await prisma.delivery.findFirst({
             where: {
                 OR: [
-                    { id: params.id },
-                    { deliveryId: params.id.startsWith('#') ? params.id : `#${params.id}` },
+                    { id: decodedId },
+                    { deliveryId: decodedId },
+                    { deliveryId: decodedId.startsWith('#') ? decodedId : `#${decodedId}` },
                 ],
             },
             include: {
@@ -20,6 +24,7 @@ export async function GET(
                 },
             },
         })
+        console.log(delivery)
 
         if (!delivery) {
             return NextResponse.json(
@@ -38,30 +43,48 @@ export async function GET(
     }
 }
 
-// PUT /api/deliveries/[id] - Update delivery
+// PUT /api/deliveries/[id] - Update delivery status and history
 export async function PUT(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    props: { params: Promise<{ id: string }> }
 ) {
     try {
+        const params = await props.params;
         const body = await request.json()
+
+        // Prepare update data
+        const updateData: any = {
+            status: body.status,
+            senderName: body.senderName,
+            senderAddress: body.senderAddress,
+            senderEmail: body.senderEmail,
+            senderPhone: body.senderPhone,
+            receiverName: body.receiverName,
+            receiverAddress: body.receiverAddress,
+            receiverEmail: body.receiverEmail,
+            receiverPhone: body.receiverPhone,
+            scheduledDate: body.scheduledDate ? new Date(body.scheduledDate) : undefined,
+        }
+
+        // If status is being updated, log it in history
+        if (body.status) {
+            updateData.history = {
+                create: {
+                    status: body.status,
+                    location: body.location || 'Unknown Location', // Default if not provided
+                    description: body.description || `Status updated to ${body.status}`,
+                    timestamp: new Date(),
+                }
+            }
+        }
 
         const delivery = await prisma.delivery.update({
             where: { id: params.id },
-            data: {
-                status: body.status,
-                senderName: body.senderName,
-                senderAddress: body.senderAddress,
-                senderEmail: body.senderEmail,
-                senderPhone: body.senderPhone,
-                receiverName: body.receiverName,
-                receiverAddress: body.receiverAddress,
-                receiverEmail: body.receiverEmail,
-                receiverPhone: body.receiverPhone,
-                scheduledDate: body.scheduledDate ? new Date(body.scheduledDate) : undefined,
-            },
+            data: updateData,
             include: {
-                history: true,
+                history: {
+                    orderBy: { timestamp: 'desc' }
+                },
             },
         })
 
@@ -78,9 +101,10 @@ export async function PUT(
 // DELETE /api/deliveries/[id] - Delete delivery
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    props: { params: Promise<{ id: string }> }
 ) {
     try {
+        const params = await props.params;
         await prisma.delivery.delete({
             where: { id: params.id },
         })

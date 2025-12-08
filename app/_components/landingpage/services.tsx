@@ -19,24 +19,24 @@ const services = [
 ]
 
 function Services() {
-  return (
-    <div className="flex flex-col gap-4">
-        {/* title */}
-        <h2 className='text-xl font-semibold'>Our Advanced Services</h2>
-        {/* service list */}
-        <div className="flex flex-row gap-3">
-            {services.map((service, index) => (
-                <div key={index} className="flex flex-col gap-2 border border-gray-400/20 p-4 rounded-lg">
-                    <div className="p-4 bg-primary rounded-lg text-blue-600">
-                        {service.icon}
+    return (
+        <div className="flex flex-col gap-4">
+            {/* title */}
+            <h2 className='text-xl font-semibold'>Our Advanced Services</h2>
+            {/* service list */}
+            <div className="flex flex-col md:flex-row gap-3">
+                {services.map((service, index) => (
+                    <div key={index} className="flex flex-col gap-2 border border-gray-400/20 p-4 rounded-lg">
+                        <div className="p-4 bg-primary rounded-lg text-blue-600">
+                            {service.icon}
+                        </div>
+                        <h3 className="font-semibold">{service.title}</h3>
+                        <p className="text-gray-500">{service.description}</p>
                     </div>
-                    <h3 className="font-semibold">{service.title}</h3>
-                    <p className="text-gray-500">{service.description}</p>
-                </div>
-            ))}
+                ))}
+            </div>
         </div>
-    </div>
-  )
+    )
 }
 
 export default Services

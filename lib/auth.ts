@@ -1,25 +1,17 @@
-import { SignJWT, jwtVerify } from 'jose';
-import bcrypt from 'bcryptjs';
 import { cookies } from 'next/headers';
+import bcrypt from 'bcryptjs';
+import {
+    SECRET_KEY,
+    COOKIE_NAME,
+    COOKIE_OPTIONS,
+    SessionPayload,
+    createSession,
+    verifySession
+} from './jwt';
 
-const SECRET_KEY = new TextEncoder().encode(
-    process.env.JWT_SECRET || 'your-secret-key-change-in-production'
-);
-
-const COOKIE_NAME = 'admin_session';
-const COOKIE_OPTIONS = {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax' as const,
-    maxAge: 60 * 60 * 24 * 7, // 7 days
-    path: '/',
-};
-
-export interface SessionPayload {
-    adminId: string;
-    username: string;
-    email: string;
-}
+// Re-export constants and types for convenience
+export { SECRET_KEY, COOKIE_NAME, COOKIE_OPTIONS, createSession, verifySession };
+export type { SessionPayload };
 
 /**
  * Hash a password using bcrypt
@@ -36,33 +28,6 @@ export async function verifyPassword(
     hashedPassword: string
 ): Promise<boolean> {
     return bcrypt.compare(password, hashedPassword);
-}
-
-/**
- * Create a JWT session token
- */
-export async function createSession(payload: SessionPayload): Promise<string> {
-    const token = await new SignJWT(payload)
-        .setProtectedHeader({ alg: 'HS256' })
-        .setIssuedAt()
-        .setExpirationTime('7d')
-        .sign(SECRET_KEY);
-
-    return token;
-}
-
-/**
- * Verify and decode a JWT session token
- */
-export async function verifySession(
-    token: string
-): Promise<SessionPayload | null> {
-    try {
-        const { payload } = await jwtVerify(token, SECRET_KEY);
-        return payload as SessionPayload;
-    } catch (error) {
-        return null;
-    }
 }
 
 /**
@@ -96,7 +61,7 @@ export async function clearSession(): Promise<void> {
 }
 
 /**
- * Check if user is authenticated (for middleware)
+ * Check if user is authenticated (for server components/actions)
  */
 export async function isAuthenticated(): Promise<boolean> {
     const session = await getSession();

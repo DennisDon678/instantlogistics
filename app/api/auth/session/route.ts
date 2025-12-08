@@ -18,6 +18,7 @@ export async function GET() {
                 id: session.adminId,
                 username: session.username,
                 email: session.email,
+                name: session.name,
             },
         });
     } catch (error) {
