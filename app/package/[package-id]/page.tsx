@@ -32,7 +32,7 @@ function Tracking() {
     const [delivery, setDelivery] = useState<Delivery | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const [searchId, setSearchId] = useState('');
+    const [searchId, setSearchId] = useState(trackingId);
 
     useEffect(() => {
         if (trackingId) {

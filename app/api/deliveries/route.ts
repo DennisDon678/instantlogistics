@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
         const body = await request.json()
 
         // Generate delivery ID (e.g., #8B3D9A)
-        const deliveryId = `#${Math.random().toString(36).substring(2, 8).toUpperCase()}`
+        const deliveryId = `DLV-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
 
         const delivery = await prisma.delivery.create({
             data: {
