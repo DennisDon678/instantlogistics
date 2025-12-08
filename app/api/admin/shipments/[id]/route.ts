@@ -3,18 +3,20 @@ import { prisma } from '@/lib/prisma';
 import { isAuthenticated } from '@/lib/auth';
 import { DeliveryStatus } from '@prisma/client';
 
+// GET /api/admin/shipments/[id]
 export async function GET(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    props: { params: Promise<{ id: string }> }
 ) {
     try {
+        const params = await props.params;
         const authenticated = await isAuthenticated();
         if (!authenticated) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
         const delivery = await prisma.delivery.findUnique({
-            where: { deliveryId: params.id }, // Assuming we use deliveryId for lookup, not UUID
+            where: { deliveryId: params.id },
             include: { history: { orderBy: { timestamp: 'desc' } } },
         });
 
@@ -32,11 +34,13 @@ export async function GET(
     }
 }
 
+// PUT /api/admin/shipments/[id]
 export async function PUT(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    props: { params: Promise<{ id: string }> }
 ) {
     try {
+        const params = await props.params;
         const authenticated = await isAuthenticated();
         if (!authenticated) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -73,11 +77,13 @@ export async function PUT(
     }
 }
 
+// DELETE /api/admin/shipments/[id]
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    props: { params: Promise<{ id: string }> }
 ) {
     try {
+        const params = await props.params;
         const authenticated = await isAuthenticated();
         if (!authenticated) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
