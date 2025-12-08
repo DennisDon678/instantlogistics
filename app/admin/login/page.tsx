@@ -82,7 +82,7 @@ export default function AdminLoginPage() {
                                 onChange={(e) => setUsername(e.target.value)}
                                 required
                                 disabled={loading}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#258cf4] focus:border-transparent outline-none transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
+                                className="w-full text-black px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#258cf4] focus:border-transparent outline-none transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
                                 placeholder="Enter your username or email"
                             />
                         </div>
@@ -102,7 +102,7 @@ export default function AdminLoginPage() {
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
                                 disabled={loading}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#258cf4] focus:border-transparent outline-none transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
+                                className="w-full text-black px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#258cf4] focus:border-transparent outline-none transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
                                 placeholder="Enter your password"
                             />
                         </div>
