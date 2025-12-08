@@ -1,6 +1,18 @@
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 
+// Define the shape of the activity data
+interface ActivityWithDelivery {
+    id: string
+    status: string
+    location: string
+    description: string | null
+    timestamp: Date
+    delivery: {
+        deliveryId: string
+    }
+}
+
 async function getRecentActivities() {
     const activities = await prisma.deliveryHistory.findMany({
         take: 5,
@@ -44,7 +56,7 @@ export default async function ActivityTable() {
                                     </td>
                                 </tr>
                             ) : (
-                                activities.map((activity, index) => (
+                                activities.map((activity: ActivityWithDelivery, index: number) => (
                                     <tr
                                         key={activity.id}
                                         className={`hover:bg-white/5 transition-colors ${index !== activities.length - 1 ? 'border-b border-white/10' : ''
